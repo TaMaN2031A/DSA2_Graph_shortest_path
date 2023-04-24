@@ -2,9 +2,7 @@ package com.company;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.Scanner;
-import java.util.Collections;
 
 public class CLI {
     Graph graph;
@@ -36,7 +34,7 @@ public class CLI {
         path += dest;
         while(dest != src)
         {
-            path+=(">-"+parents.get(dest));
+            path = path.concat (">-"+parents.get(dest));
             dest = parents.get(dest);
         }
         for(int i = path.length()-1; i >= 0; i--)
@@ -44,19 +42,19 @@ public class CLI {
         System.out.println();
     }
 
-    void initiaize() throws IOException {
+    void initialize() throws IOException {
         System.out.println("Insert the path to construct the graph");
           //  try {
                 Scanner in = new Scanner(System.in);
                 String path = in.nextLine();
                 graph = new Graph(path);
-                mainmenu();
+                mainMenu();
           /*  }
             catch (Exception e) {
                 System.out.println("Wrong path");
             }*/
     }
-    void mainmenu()
+    void mainMenu()
     {
         while(true) {
             System.out.println("Pick your required sub-menu");
@@ -86,8 +84,8 @@ public class CLI {
             }
             if (method == 2) { // Floyd warshall
                 ArrayList<ArrayList<Integer>> costs = new ArrayList<>();
-                ArrayList<Integer> predecssors = new ArrayList<>();
-                graph.floyd_warshall(costs, predecssors);
+                ArrayList<Integer> predecessors = new ArrayList<>();
+                graph.floyd_warshall(costs, predecessors);
                 while(true) {
                     int destination = -2;
                     while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
@@ -101,7 +99,7 @@ public class CLI {
                         System.out.println("No possible path");
                     else {
                         System.out.println("Total cost is: " + c);
-                        print_path(predecssors, destination, source);
+                        print_path(predecessors, destination, source);
                     }
                 }
             } else if(method == 1) { // Bellman ford

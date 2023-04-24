@@ -24,13 +24,12 @@ public class Graph {
         String[] string = lines.get(0)
                 .split(" ");
         int[] arr = new int[string.length];
-        int v = Integer.parseInt(string[0]);
+        size = Integer.parseInt(string[0]);
         int e = Integer.parseInt(string[1]);
-        size = v;
-        graph = new int[v][v];
-        for(int i = 0; i < v; i++) {
+        graph = new int[size][size];
+        for(int i = 0; i < size; i++) {
             ArrayList<Integer> edges = new ArrayList<>();
-            for (int j = 0; j < v; j++) {
+            for (int j = 0; j < size; j++) {
                 graph[i][j] = 0;
             }
             graph_list.add(edges);
@@ -57,7 +56,7 @@ public class Graph {
         int min = Integer.MAX_VALUE, ind = -1;
         for(int i = 0; i < size; i++)
         {
-            if (spt[i] == false && cost.get(i) <= min) {
+            if (!spt[i] && cost.get(i) <= min) {
                 min = cost.get(i);
                 ind = i;
             }
@@ -89,7 +88,29 @@ public class Graph {
     }
     boolean bellman_ford(ArrayList<Integer> cost, ArrayList<Integer> parents, int src)
     {
-        return true;
+        int[] first = new int[size];
+        int[] second = new int[size];
+        boolean nCycles = false;
+        for (int i=0; i<size; i++) {
+            second[i] = Integer.MAX_VALUE;
+        }
+        second[src] = 0;
+        for (int i=0; i<size; i++) {
+            first = second;
+            for (int j=0; j<size; j++) {
+                for (int k=0; k<size; k++) {
+                    if (graph[k][j] != 0 && first[j] > first[k] + graph[k][j]) {
+                        second[j] = first[k] + graph[k][j];
+                        parents.set(j, k);
+                    } else second[j] = first[j];
+                }
+            }
+        }
+        for (int i=0; i<size; i++) {
+            if (first[i] != second[i]) nCycles = true;
+            cost.set(i, second[i]);
+        }
+        return !nCycles;
     }
     boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<Integer> predecessors)
     {

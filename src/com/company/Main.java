@@ -8,6 +8,6 @@ public class Main {
         System.out.println("Welcome");
         CLI cli = new CLI();
         while (true)
-        cli.initiaize();
+        cli.initialize();
     }
 }
