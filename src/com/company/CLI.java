@@ -84,7 +84,7 @@ public class CLI {
             }
             if (method == 2) { // Floyd warshall
                 ArrayList<ArrayList<Integer>> costs = new ArrayList<>();
-                ArrayList<Integer> predecessors = new ArrayList<>();
+                ArrayList<ArrayList<Integer>> predecessors = new ArrayList<>();
                 graph.floyd_warshall(costs, predecessors);
                 while(true) {
                     int destination = -2;
@@ -99,7 +99,7 @@ public class CLI {
                         System.out.println("No possible path");
                     else {
                         System.out.println("Total cost is: " + c);
-                        print_path(predecessors, destination, source);
+                        print_path(predecessors.get(source), destination, source);
                     }
                 }
             } else if(method == 1) { // Bellman ford
@@ -161,114 +161,145 @@ public class CLI {
     }
     void all_to_all_solver()
     {
-        int method = method_picker(3); // All three options
-        ArrayList<ArrayList<Integer>> allCosts = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> allParents = new ArrayList<>();
+        while (true)
+        {
+            int method = method_picker(3); // All three options
+            ArrayList<ArrayList<Integer>> allCosts = new ArrayList<>();
+            ArrayList<ArrayList<Integer>> allParents = new ArrayList<>();
 
-        if(method == 1)
-        {
-            for(int i = 0; i < graph.getSize(); i++)
+            if(method == 1)
             {
-                ArrayList<Integer> parent = new ArrayList<>();
-                ArrayList<Integer> cost = new ArrayList<>();
-                for(int j = 0; j < graph.getSize(); j++) {
-                    parent.add(-1);
-                    cost.add(0);
+                for(int i = 0; i < graph.getSize(); i++)
+                {
+                    ArrayList<Integer> parent = new ArrayList<>();
+                    ArrayList<Integer> cost = new ArrayList<>();
+                    for(int j = 0; j < graph.getSize(); j++) {
+                        parent.add(-1);
+                        cost.add(0);
+                    }
+                    graph.bellman_ford(cost, parent, i);
+                    allCosts.add(cost);
+                    allParents.add(parent);
                 }
-                graph.bellman_ford(cost, parent, i);
-                allCosts.add(cost);
-                allParents.add(parent);
+                /**Queries Taking*/
+                while(true) {
+                    int source = -2, destination = -2;
+                    while (source < 0 || source >= graph.getSize()) {
+                        System.out.println("Please give us the source node");
+                        source = Integer.parseInt(in.nextLine());
+                    }
+                    while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
+                        System.out.println("Choose destination node, enter -1 to return");
+                        destination = Integer.parseInt(in.nextLine());
+                    }
+                    if (destination == -1)
+                        return;
+                    int c =  allCosts.get(source).get(destination);
+                    if(c == Integer.MAX_VALUE)
+                        System.out.println("No possible path");
+                    else {
+                        System.out.println("Total cost is: " + c);
+                        print_path(allParents.get(source), destination, source);
+                    }
+                }
             }
-            /**Queries Taking*/
-            while(true) {
-                int source = -2, destination = -2;
-                while (source < 0 || source >= graph.getSize()) {
-                    System.out.println("Please give us the source node");
-                    source = Integer.parseInt(in.nextLine());
-                }
-                while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
-                    System.out.println("Choose destination node, enter -1 to return");
-                    destination = Integer.parseInt(in.nextLine());
-                }
-                if (destination == -1)
-                    return;
-                int c =  allCosts.get(source).get(destination);
-                if(c == Integer.MAX_VALUE)
-                    System.out.println("No possible path");
-                else {
-                    System.out.println("Total cost is: " + c);
-                    print_path(allParents.get(source), destination, source);
-                }
-            }
-        }
-        else if(method == 2)
-        {
-            ArrayList<Integer> predecessors = new ArrayList<>();
-            graph.floyd_warshall(allCosts, predecessors);
-            /**Queries Taking*/
-            while(true) {
-                int source = -2, destination = -2;
-                while (source < 0 || source >= graph.getSize()) {
-                    System.out.println("Please give us the source node");
-                    source = Integer.parseInt(in.nextLine());
-                }
-                while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
-                    System.out.println("Choose destination node, enter -1 to return");
-                    destination = Integer.parseInt(in.nextLine());
-                }
-                if (destination == -1)
-                    return;
+            else if(method == 2)
+            {
+                graph.floyd_warshall(allCosts, allParents);
+                /**Queries Taking*/
+                while(true) {
+                    int source = -2, destination = -2;
+                    while (source < 0 || source >= graph.getSize()) {
+                        System.out.println("Please give us the source node");
+                        source = Integer.parseInt(in.nextLine());
+                    }
+                    while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
+                        System.out.println("Choose destination node, enter -1 to return");
+                        destination = Integer.parseInt(in.nextLine());
+                    }
+                    if (destination == -1)
+                        return;
 
-                int c =  allCosts.get(source).get(destination);
-                if(c == Integer.MAX_VALUE)
-                    System.out.println("No possible path");
-                else {
-                    System.out.println("Total cost is: " + c);
-                    print_path(predecessors, destination, source);
+                    int c =  allCosts.get(source).get(destination);
+                    if(c == Integer.MAX_VALUE)
+                        System.out.println("No possible path");
+                    else {
+                        System.out.println("Total cost is: " + c);
+                        print_path(allParents.get(source), destination, source);
+                    }
                 }
             }
-        }
-        else
-        {
-            for(int i = 0; i < graph.getSize(); i++)
+            else if(method == 3)
             {
-                ArrayList<Integer> parent = new ArrayList<>();
-                ArrayList<Integer> cost = new ArrayList<>();
-                for(int j = 0; j < graph.getSize(); j++) {
-                    parent.add(-1);
-                    cost.add(0);
+                for(int i = 0; i < graph.getSize(); i++)
+                {
+                    ArrayList<Integer> parent = new ArrayList<>();
+                    ArrayList<Integer> cost = new ArrayList<>();
+                    for(int j = 0; j < graph.getSize(); j++) {
+                        parent.add(-1);
+                        cost.add(0);
+                    }
+                    graph.dijkstra(cost, parent, i);
+                    allCosts.add(cost);
+                    allParents.add(parent);
                 }
-                graph.dijkstra(cost, parent, i);
-                allCosts.add(cost);
-                allParents.add(parent);
-            }
-            /**Queries Taking*/
-            while(true) {
-                int source = -2, destination = -2;
-                while (source < 0 || source >= graph.getSize()) {
-                    System.out.println("Please give us the source node");
-                    source = Integer.parseInt(in.nextLine());
-                }
-                while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
-                    System.out.println("Choose destination node, enter -1 to return");
-                    destination = Integer.parseInt(in.nextLine());
-                }
-                if (destination == -1)
-                    return;
-                int c =  allCosts.get(source).get(destination);
-                if(c == Integer.MAX_VALUE)
-                    System.out.println("No possible path");
-                else {
-                    System.out.println("Total cost is: " + c);
-                    print_path(allParents.get(source), destination, source);
+                /**Queries Taking*/
+                while(true) {
+                    int source = -2, destination = -2;
+                    while (source < 0 || source >= graph.getSize()) {
+                        System.out.println("Please give us the source node");
+                        source = Integer.parseInt(in.nextLine());
+                    }
+                    while (destination != -1 && (destination < -1 || destination >= graph.getSize())) {
+                        System.out.println("Choose destination node, enter -1 to return");
+                        destination = Integer.parseInt(in.nextLine());
+                    }
+                    if (destination == -1)
+                        return;
+                    int c =  allCosts.get(source).get(destination);
+                    if(c == Integer.MAX_VALUE)
+                        System.out.println("No possible path");
+                    else {
+                        System.out.println("Total cost is: " + c);
+                        print_path(allParents.get(source), destination, source);
+                    }
                 }
             }
         }
     }
     void cycle_check_solver()
     {
-        int method = method_picker(2); // Only second and third
-
+        while (true) {
+            int method = method_picker(2); // Only second and third
+            if (method == 1)
+            {
+                ArrayList<Integer> parent = new ArrayList<>();
+                ArrayList<Integer> cost = new ArrayList<>();
+                for(int i = 0; i < graph.getSize(); i++)
+                {
+                    for(int j = 0; j < graph.getSize(); j++) {
+                        parent.add(-1);
+                        cost.add(0);
+                    }
+                    boolean cycles = graph.bellman_ford(cost, parent, i);
+                    if (!cycles) {
+                        System.out.println("Negative cycle present");
+                        return;
+                    }
+                }
+                System.out.println("No negative cycle detected");
+                return;
+            }
+            else if (method == 2)
+            {
+                ArrayList<ArrayList<Integer>> allCosts = new ArrayList<>();
+                ArrayList<ArrayList<Integer>> allParents = new ArrayList<>();
+                boolean cycles = graph.floyd_warshall(allCosts, allParents);
+                if (cycles) System.out.println("No negative cycle detected");
+                else System.out.println("Negative cycle present");
+                return;
+            }
+        }
     }
 
 

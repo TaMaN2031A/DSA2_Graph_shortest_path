@@ -30,8 +30,9 @@ public class Graph {
         for(int i = 0; i < size; i++) {
             ArrayList<Integer> edges = new ArrayList<>();
             for (int j = 0; j < size; j++) {
-                graph[i][j] = 0;
+                graph[i][j] = Integer.MAX_VALUE;
             }
+            graph[i][i] = 0;
             graph_list.add(edges);
         }
         System.out.println("Saba7");
@@ -78,13 +79,14 @@ public class Graph {
             shortest_path_tree_set[u] = true; // Only enters once
             for(int v : graph_list.get(u))
             {
-                if(!shortest_path_tree_set[v] && graph[u][v] != 0
+                if(graph[u][v] != Integer.MAX_VALUE && !shortest_path_tree_set[v]
                 && dist.get(u) != Integer.MAX_VALUE && dist.get(u) + graph[u][v] < dist.get(v)) {
                     dist.set(v, dist.get(u) + graph[u][v]);
                     parents.set(v, u); // Update parent
                 }
             }
         }
+        System.out.println(parents);
     }
     boolean bellman_ford(ArrayList<Integer> cost, ArrayList<Integer> parents, int src)
     {
@@ -94,15 +96,16 @@ public class Graph {
         for (int i=0; i<size; i++) {
             second[i] = Integer.MAX_VALUE;
         }
+        parents.set(src, src);
         second[src] = 0;
         for (int i=0; i<size; i++) {
-            first = second;
+            first = second.clone();
             for (int j=0; j<size; j++) {
                 for (int k=0; k<size; k++) {
-                    if (graph[k][j] != 0 && first[j] > first[k] + graph[k][j]) {
+                    if (first[k] != Integer.MAX_VALUE && graph[k][j] != Integer.MAX_VALUE && first[j] > first[k] + graph[k][j]) {
                         second[j] = first[k] + graph[k][j];
                         parents.set(j, k);
-                    } else second[j] = first[j];
+                    } else second[j] = Math.min(first[j], second[j]);
                 }
             }
         }
@@ -110,27 +113,26 @@ public class Graph {
             if (first[i] != second[i]) nCycles = true;
             cost.set(i, second[i]);
         }
+        System.out.println(parents);
         return !nCycles;
     }
 
     
-    boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<Integer> predecessors)
+    boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<ArrayList<Integer>> predecessors)
     {
         int i, j, k;
-        int inf=100000;
-        int [][] dist,par ;
-        dist=graph.clone();
-        par=graph.clone();
+        int [][] dist;
+        boolean nCycles = false;
+        dist = graph.clone();
+        ArrayList<Integer> x = new ArrayList<>();
 
 
 
         for (i=0;i<getSize();i++){
+            predecessors.add(new ArrayList<>());
             for (j=0;j< getSize();j++){
-                if(i!=j&&dist[i][j]==0) {
-                    dist[i][j] = inf;
-                }
-                                // put inf between the nodes that cannot  get one from another
-                par[i][j]=i;  // set all parent
+
+                predecessors.get(i).add(j, i);  // set all parent
 
             }
         }
@@ -143,25 +145,24 @@ public class Graph {
         for (k = 0; k <getSize(); k++) {
             for (i = 0; i < getSize(); i++) {
                 for (j = 0; j < getSize(); j++) {
-                    if (dist[i][k] + dist[k][j]< dist[i][j]) {
+                    if (dist[k][j] != Integer.MAX_VALUE && dist[i][k] != Integer.MAX_VALUE && dist[i][k] + dist[k][j]< dist[i][j]) {
                         dist[i][j] = dist[i][k] + dist[k][j];
-                        costs.get(i).set(j,dist[i][j]);               //floyd algorithm  and set par
-                        par[i][j]=k;
+                        predecessors.get(i).set(j, predecessors.get(k).get(j));
                     }
                 }
             }
         }
 
 
-
-
-        for ( i=0;i<5;i++){
-            for ( j=0;j<5;j++){
-                System.out.print(dist[i][j]+" ");    //print all shortest paths
+        for (i=0; i<dist.length; i++) {
+            ArrayList<Integer> rowList = new ArrayList<>();
+            for (j=0; j<dist[i].length; j++) {
+                rowList.add(dist[i][j]);
             }
-            System.out.println();
+            if (dist[i][i] < 0) nCycles = true;
+            costs.add(rowList);
         }
-
-        return true;
+        System.out.println(predecessors.get(3));
+        return !nCycles;
     }
 }
