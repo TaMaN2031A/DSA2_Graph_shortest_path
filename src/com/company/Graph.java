@@ -112,8 +112,56 @@ public class Graph {
         }
         return !nCycles;
     }
+
+    
     boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<Integer> predecessors)
     {
+        int i, j, k;
+        int inf=100000;
+        int [][] dist,par ;
+        dist=graph.clone();
+        par=graph.clone();
+
+
+
+        for (i=0;i<getSize();i++){
+            for (j=0;j< getSize();j++){
+                if(i!=j&&dist[i][j]==0) {
+                    dist[i][j] = inf;
+                }
+                                // put inf between the nodes that cannot  get one from another
+                par[i][j]=i;  // set all parent
+
+            }
+        }
+
+
+
+
+
+
+        for (k = 0; k <getSize(); k++) {
+            for (i = 0; i < getSize(); i++) {
+                for (j = 0; j < getSize(); j++) {
+                    if (dist[i][k] + dist[k][j]< dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        costs.get(i).set(j,dist[i][j]);               //floyd algorithm  and set par
+                        par[i][j]=k;
+                    }
+                }
+            }
+        }
+
+
+
+
+        for ( i=0;i<5;i++){
+            for ( j=0;j<5;j++){
+                System.out.print(dist[i][j]+" ");    //print all shortest paths
+            }
+            System.out.println();
+        }
+
         return true;
     }
 }
