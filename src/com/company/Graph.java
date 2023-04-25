@@ -86,7 +86,6 @@ public class Graph {
                 }
             }
         }
-        System.out.println(parents);
     }
     boolean bellman_ford(ArrayList<Integer> cost, ArrayList<Integer> parents, int src)
     {
@@ -113,7 +112,6 @@ public class Graph {
             if (first[i] != second[i]) nCycles = true;
             cost.set(i, second[i]);
         }
-        System.out.println(parents);
         return !nCycles;
     }
 
@@ -121,17 +119,15 @@ public class Graph {
     boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<ArrayList<Integer>> predecessors)
     {
         int i, j, k;
-        int [][] dist;
+        int [][] dist = new int[getSize()][getSize()];
         boolean nCycles = false;
-        dist = graph.clone();
-        ArrayList<Integer> x = new ArrayList<>();
 
 
 
         for (i=0;i<getSize();i++){
             predecessors.add(new ArrayList<>());
             for (j=0;j< getSize();j++){
-
+                dist[i][j] = graph[i][j];
                 predecessors.get(i).add(j, i);  // set all parent
 
             }
@@ -162,7 +158,6 @@ public class Graph {
             if (dist[i][i] < 0) nCycles = true;
             costs.add(rowList);
         }
-        System.out.println(predecessors.get(3));
         return !nCycles;
     }
 }
