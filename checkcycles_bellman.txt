@@ -1,0 +1,8 @@
+271805 5 0.5 Negative Cycle Presents
+1077763 5 0.5 No Negative Cycles detected
+841456 10 0.54444444 Negative Cycle Presents
+1013765 10 0.5222222 Negative Cycle Presents
+1325082 15 0.30952382 Negative Cycle Presents
+15166856 15 0.1904762 No Negative Cycles detected
+18721143 20 0.14210527 No Negative Cycles detected
+80686471 40 0.53717947 No Negative Cycles detected

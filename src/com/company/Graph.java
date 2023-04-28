@@ -17,6 +17,19 @@ public class Graph {
     int[][] graph;
     ArrayList<ArrayList<Integer>> graph_list = new ArrayList<>();
     int size;
+    float density;
+    int edges;
+
+    public void setdensity(int size, int edges){
+        this.density= (float)edges/ (size * (size-1)); 
+    }
+    public float getdensity(){
+        return this.density;
+    }
+    public int getedges(){
+        return this.edges;
+    }
+
 
     public Graph(String path) throws IOException {
         Path p = Paths.get(path);
@@ -25,6 +38,7 @@ public class Graph {
                 .split(" ");
         int[] arr = new int[string.length];
         size = Integer.parseInt(string[0]);
+        edges = Integer.parseInt(string[1]);
         int e = Integer.parseInt(string[1]);
         graph = new int[size][size];
         for(int i = 0; i < size; i++) {
@@ -35,10 +49,8 @@ public class Graph {
             graph[i][i] = 0;
             graph_list.add(edges);
         }
-        System.out.println("Saba7");
         for(int i = 1; i <= e; i++)
-        {
-            string = lines.get(i)
+        {   string = lines.get(i)
                     .split(" ");
             arr = new int[string.length];
             int src = Integer.parseInt(string[0]);
@@ -47,11 +59,15 @@ public class Graph {
             graph_list.get(src).add(dst);
             graph[src][dst] = wght;
         }
+        setdensity(size, edges);
     }
-    int getSize()
+
+
+    public int getSize()
     {
         return size;
     }
+
     private int get_min_dist(ArrayList<Integer> cost, boolean[] spt)
     {
         int min = Integer.MAX_VALUE, ind = -1;
@@ -64,7 +80,7 @@ public class Graph {
         }
         return ind;
     }
-    void dijkstra(ArrayList<Integer> dist, ArrayList<Integer> parents, int src)
+    public void dijkstra(ArrayList<Integer> dist, ArrayList<Integer> parents, int src)
     {
         boolean[] shortest_path_tree_set = new boolean[getSize()];
         for(int i = 0; i < getSize(); i++) {
@@ -87,7 +103,7 @@ public class Graph {
             }
         }
     }
-    boolean bellman_ford(ArrayList<Integer> cost, ArrayList<Integer> parents, int src)
+    public boolean bellman_ford(ArrayList<Integer> cost, ArrayList<Integer> parents, int src)
     {
         int[] first = new int[size];
         int[] second = new int[size];
@@ -97,7 +113,7 @@ public class Graph {
         }
         parents.set(src, src);
         second[src] = 0;
-        for (int i=0; i<size; i++) {
+        for (int i=0; i<size+1; i++) {
             first = second.clone();
             for (int j=0; j<size; j++) {
                 for (int k=0; k<size; k++) {
@@ -108,15 +124,16 @@ public class Graph {
                 }
             }
         }
+
         for (int i=0; i<size; i++) {
             if (first[i] != second[i]) nCycles = true;
-            cost.set(i, second[i]);
+            cost.set(i, first[i]);
         }
         return !nCycles;
     }
 
     
-    boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<ArrayList<Integer>> predecessors)
+    public boolean floyd_warshall(ArrayList<ArrayList<Integer>> costs, ArrayList<ArrayList<Integer>> predecessors)
     {
         int i, j, k;
         int [][] dist = new int[getSize()][getSize()];
